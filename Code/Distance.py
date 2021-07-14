@@ -9,7 +9,7 @@
 
 import os
 import numpy as np
-
+from Code.Function import print_progress_bar
 # 由于需要进行文件读取，所有这里进行了存储精度的控制
 np.set_printoptions(precision=6)
 
@@ -93,43 +93,36 @@ class B2B:
         self._dis = []
         # 获取距离矩阵的存储路径
         self._save_b2b_path = self._b2b_save_home + self._data_name + '_' + self._b2b_type + ".npz"
-        print(self._save_b2b_path)
-        # self.__compute_dis()
+        self.__compute_dis()
 
     def __compute_dis(self):
         """
         计算距离
         """
-        if not os.path.exists(self._save_b2b_path) or os.path.getsize(self.dis_path) == 0:
-            np.savez(self.dis_path, dis=None)
-
-            temp_size = len(self.bags)
-            temp_dis = np.zeros((temp_size, temp_size))
-            print("Computing the distance matrix...")
-            for i in range(temp_size):
-                print_progress_bar(i, temp_size)
-                for j in range(i, temp_size):
-                    if self.dis_type == 'ave_hausdorff':
-                        temp_dis[i, j] = temp_dis[j, i] = ave_hausdorff(self.bags[i, 0][:, : self.dimension],
-                                                                        self.bags[j, 0][:, : self.dimension],
-                                                                        self.ins_dis_type,
-                                                                        self.gamma)
-                    elif self.dis_type == 'vir_hausdorff':
-                        temp_dis[i, j] = temp_dis[j, i] = simple_dis(self.bags[i, 0][:, : self.dimension],
-                                                                        self.bags[j, 0][:, : self.dimension],
-                                                                        self.ins_dis_type,
-                                                                        self.gamma)
+        if not os.path.exists(self._save_b2b_path):
+            # 包的大小
+            N = len(self._bags)
+            dis = np.zeros((N, N))
+            print("计算距离矩阵...")
+            for i in range(N):
+                # 打印进度条
+                print_progress_bar(i, N)
+                # 包i和j的距离即j和i的距离
+                for j in range(i, N):
+                    if self._b2b_type == 'ave':
+                        dis[i, j] = dis[j, i] = ave_hausdorff(self._bags[i][0][:, : -1], self._bags[j][0][:, : -1])
+                    else:
+                        dis[i, j] = dis[j, i] = simple_dis(self._bags[i][0][:, : -1], self._bags[j][0][:, : -1])
+            # 结束的时候需要换行一下
             print()
-            np.savez(self.dis_path, dis=temp_dis)
-        self.dis = np.load(self.dis_path)['dis']
+            np.savez(self._save_b2b_path, dis=dis)
+        self.dis = np.load(self._save_b2b_path)['dis']
 
     def get_dis(self):
         """
-        Get the distance matrix.
-        :return
-            The distance matrix.
+        获取距离矩阵
         """
-        return self.dis
+        return self._dis
 
 
 def test():
