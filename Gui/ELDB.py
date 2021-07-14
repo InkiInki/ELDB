@@ -5,9 +5,9 @@
 """
 
 import warnings
+import numpy as np
 from Gui.MIL import MIL
 from Gui.Classify import Classify
-from Gui.I2B import *
 from Gui.B2B import B2B
 from Gui.SimpleTool import get_iter
 

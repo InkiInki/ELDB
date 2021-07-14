@@ -5,9 +5,7 @@
 @note: Some common function, and all given vector data's type must be numpy.array.
 """
 
-import time
 import numpy as np
-import sys
 import scipy.io as scio
 
 

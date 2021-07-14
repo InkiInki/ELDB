@@ -295,14 +295,14 @@ class Main:
             for i in range(10):
                 performance[i] = run.classify() * 100
                 self.text_print_middle.insert(tk.END, "  The %d-th 10CV: %.2f\n" % (i, performance[i]))
-            current_time = time.time() - start_time
+            current_time = (time.time() - start_time) * 1000
             total_time += current_time
             self.text_print_middle.insert(tk.END, "The %d-loop time cost: %.2f\n" % (loop, current_time))
             performance_std = np.std(performance, ddof=1)
             performance_ave = (np.sum(performance) / 10)
-            self.text_print_middle.insert(tk.END, "Per: %.2f; std: %.2f; time cost %.2f\n" % (
+            self.text_print_middle.insert(tk.END, "Per: %.2f; std: %.2f; time cost %.2f ms\n" % (
                 performance_ave, performance_std, current_time))
-            self.text_print_final.insert(tk.END, "The %d -th per: %.2f; std: %.2f; time cost %.2f\n" % (
+            self.text_print_final.insert(tk.END, "The %d -th per: %.2f; std: %.2f; time cost %.2f ms\n" % (
                 loop, performance_ave, performance_std, current_time))
             if performance_max is None or performance_max[0] < performance_ave:
                 performance_max = [performance_ave, performance_std]
