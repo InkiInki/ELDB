@@ -1,8 +1,8 @@
 """
 作者: 因吉
-联系方式: inki.yinji@qq.com
+邮箱: inki.yinji@qq.com
 创建日期：2020 0922
-近一次修改：2021 0713
+近一次修改：2021 0714
 说明：获取距离矩阵
 """
 
@@ -74,7 +74,7 @@ class B2B:
         b2b_save_home：  默认距离矩阵的存储主目录
     """
 
-    def __init__(self, data_name, bags, b2b_type="ave", b2b_save_home="../Data/Distance/b2b_"):
+    def __init__(self, data_name, bags, b2b_type="ave", b2b_save_home="../Data/Distance/"):
         """
         构造函数
         """
@@ -92,7 +92,9 @@ class B2B:
         # 存储计算的距离矩阵
         self._dis = []
         # 获取距离矩阵的存储路径
-        self._save_b2b_path = self._b2b_save_home + self._data_name + '_' + self._b2b_type + ".npz"
+        self._save_b2b_path = self._b2b_save_home + "b2b_" + self._data_name + '_' + self._b2b_type + ".npz"
+        self._b2b_name = {"ave": "ave_hausdorff",
+                          "sim": "simple_dis"}
         self.__compute_dis()
 
     def __compute_dis(self):
@@ -103,7 +105,7 @@ class B2B:
             # 包的大小
             N = len(self._bags)
             dis = np.zeros((N, N))
-            print("计算距离矩阵...")
+            print("使用%s距离计算距离矩阵..." % self._b2b_name[self._b2b_type])
             for i in range(N):
                 # 打印进度条
                 print_progress_bar(i, N)
@@ -132,7 +134,7 @@ def test():
     data_name = "../Data/Benchmark/musk1+.mat"
     from Gui.MIL import MIL
     a = MIL(data_name)
-    b = B2B("musk1+", a.bags)
+    b = B2B("musk1+", a.bags, b2b_type="ave")
 
 
 if __name__ == '__main__':
