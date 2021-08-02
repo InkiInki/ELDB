@@ -46,6 +46,25 @@ def get_k_cv_idx(num_x, k=10):
     return ret_tr_idx, ret_te_idx
 
 
+def get_performance(type_performance):
+    """
+    获取分类性能度量
+    :param type_performance: 分类性能度量指标
+    :return: 分类性能度量函数
+    """
+    ret_per = {}
+    for type_per in type_performance:
+        if type_per == "acc":
+            from sklearn.metrics import accuracy_score
+            metric = accuracy_score
+        else:
+            from sklearn.metrics import f1_score
+            metric = f1_score
+        ret_per[type_per] = metric
+
+    return ret_per
+
+
 def print_progress_bar(idx, size):
     """
     打印进度条
