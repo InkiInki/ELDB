@@ -58,10 +58,6 @@ class Classify:
             elif classifier_type == "j48":
                 from sklearn.tree import DecisionTreeClassifier
                 self.__classifier.append(DecisionTreeClassifier())
-            self.tr_predict_arr[classifier_type], self.tr_true_label_arr[classifier_type] = [], []
-            self.tr_per[classifier_type] = []
-            self.te_predict_arr[classifier_type], self.te_true_label_arr[classifier_type] = [], []
-            self.te_per[classifier_type] = []
 
         if self.__performance_type is None:
             self.__performance_type = ["f1_score"]
@@ -76,12 +72,23 @@ class Classify:
                 from sklearn.metrics import roc_auc_score
                 self.__performance_er.append(roc_auc_score)
 
+    def __reset_record(self):
+        """
+        重设记录向量
+        """
+        for classifier_type in self.__classifier_type:
+            self.tr_predict_arr[classifier_type], self.tr_true_label_arr[classifier_type] = [], []
+            self.tr_per[classifier_type] = []
+            self.te_predict_arr[classifier_type], self.te_true_label_arr[classifier_type] = [], []
+            self.te_per[classifier_type] = []
+
     def test(self, data_iter, is_pre_tr=False):
         """
         :param
             data_iter：          数据迭代器
             is_pre_tr：          是否需要预测训练集
         """
+        self.__reset_record()
         for tr_data, tr_label, te_data, te_label in data_iter:
             for classifier, classifier_type in zip(self.__classifier, self.__classifier_type):
                 model = classifier.fit(tr_data, tr_label)
