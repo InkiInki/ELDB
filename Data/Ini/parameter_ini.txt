@@ -1,0 +1,3 @@
+save_path_classification_result ../Data/Record/ClassificationalResult/
+save_path_parameter ../Data/Record/Parameters/
+k 10

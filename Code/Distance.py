@@ -118,24 +118,10 @@ class B2B:
             # 结束的时候需要换行一下
             print()
             np.savez(self._save_b2b_path, dis=dis)
-        self.dis = np.load(self._save_b2b_path)['dis']
+        self._dis = np.load(self._save_b2b_path)['dis']
 
     def get_dis(self):
         """
         获取距离矩阵
         """
         return self._dis
-
-
-def test():
-    """
-    测试函数
-    """
-    data_name = "../Data/Benchmark/musk1+.mat"
-    from Gui.MIL import MIL
-    a = MIL(data_name)
-    b = B2B("musk1+", a.bags, b2b_type="ave")
-
-
-if __name__ == '__main__':
-    test()
