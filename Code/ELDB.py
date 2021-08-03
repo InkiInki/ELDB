@@ -119,6 +119,8 @@ class ELDB(MIL):
 
         # 获取训练集和测试集的索引
         idxes_tr, idxes_te = get_k_cv_idx(self.N, self._k)
+        # 正包标签
+        lab_positive = np.max(self.bag_lab)
         # 获取单实例分类器
         classifier = self.__get_classifier()
         # 性能度量器
@@ -169,7 +171,18 @@ class ELDB(MIL):
             psi = int(min(self._psi_max, N_Td) * self._psi)
             arg_score_td = np.argsort(score_td)[::-1]
             # 获取dBagSet在训练集中的真实索引
-            idx_dBagSet = arg_score_td[:psi].tolist()
+            if self._mode_bag_init == 'g':
+                idx_dBagSet = arg_score_td[:psi].tolist()
+            else:
+                idx_dBagSet = []
+                count = 0
+                for i in arg_score_td:
+                    if count >= psi:
+                        break
+                    if self._mode_bag_init == 'p' and self.bag_lab[idx_td[i]] == lab_positive or\
+                       self._mode_bag_init == 'n' and self.bag_lab[idx_td[i]] != lab_positive:
+                        idx_dBagSet.append(i)
+                    count += 1
             score_dBagSet, idx_dBagSet = score_td[idx_dBagSet], [idx_td[idx_dBagSet].tolist()]
             del score_t, arg_score_td
             # 记录最小得分的索引和得分

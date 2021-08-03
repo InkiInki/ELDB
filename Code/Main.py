@@ -6,20 +6,30 @@ from Code.ELDB import ELDB
 
 def get_parser():
     """默认参数设置"""
-    parameters = np.recfromtxt("../Data/Ini/parameter_ini.txt")
-    # save_path_parameter_txt = (save_path_parameter + data_name + '_' +
-    #                            mode_action + '_' + str(args.k) + ".npz")
-    # if not os.path.exists(save_path_parameter):
+    ini = np.recfromtxt("../Data/Ini/parameter_ini.txt")
+    save_path_parameter_txt = (str(ini[1][-1], encoding="utf-8") + data_name + '_' +
+                               mode_action + '_' + str(ini[2][-1], encoding="utf-8") + ".txt")
+    if not os.path.exists(save_path_parameter_txt):
+        print(save_path_parameter_txt)
+        psi = 0.9
+        type_b2b = "ave"
+        mode_bag_init = 'g'
+    else:
+        parameters = np.recfromtxt(save_path_parameter_txt)
+        psi = float(parameters[0][-1])
+        type_b2b = str(parameters[1][-1], encoding="utf-8")
+        mode_bag_init = str(parameters[2][-1], encoding="utf-8")
+
     parser = argparse.ArgumentParser(description="多示例学习ELDB算法的参数设置")
-    parser.add_argument("--psi", default=0.9, choices=np.arange(0.1, 1.1, 0.1), help="辨别包的选取比例")
+    parser.add_argument("--psi", default=psi, choices=np.arange(0.1, 1.1, 0.1), help="辨别包的选取比例")
     parser.add_argument("-alpha", default=0.75, type=float, help="学习率")
     parser.add_argument("--psi_max", default=100, type=int, help="最大选取包数")
-    parser.add_argument("--type_b2b", default="ave", help="距离度量")
-    parser.add_argument("--mode_bag_init", default="g", help="初始dBagSet选取模式")
-    parser.add_argument("--mode-action", default=model_action, help="行为模式")
-    parser.add_argument("--k", default=int(str(parameters[2][-1], encoding="utf-8")))
+    parser.add_argument("--type_b2b", default=type_b2b, help="距离度量")
+    parser.add_argument("--mode_bag_init", default=mode_bag_init, help="初始dBagSet选取模式")
+    parser.add_argument("--mode-action", default=mode_action, help="行为模式")
+    parser.add_argument("--k", default=int(str(ini[2][-1], encoding="utf-8")))
     parser.add_argument("--type_performance", default=["f1_score"], type=list, help="性能度量指标")
-    parser.add_argument("--save_path_classification_result", default=str(parameters[0][-1], encoding="utf-8"),
+    parser.add_argument("--save_path_classification_result", default=str(ini[0][-1], encoding="utf-8"),
                         help="分类结果保存路径")
     parser.add_argument("--print_loop", action="store_false", default=False, help="是否打印loop变化值")
 
@@ -90,7 +100,7 @@ if __name__ == '__main__':
     # 数据集的路径
     data_path = "../Data/Benchmark/musk1+.mat"
     # 行为模式，对应于aELDB和rELDB
-    model_action = 'a'  # or 'r'
+    mode_action = 'r'  # or 'r'
 
     # 用于记录最佳分类器的分类结果
     best_classifier, best_ave, best_std = {}, {}, {}
